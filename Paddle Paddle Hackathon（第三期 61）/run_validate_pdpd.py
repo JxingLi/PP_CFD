@@ -27,6 +27,7 @@ def get_args():
     parser.add_argument('--print_freq', default=1000, type=int, help="frequency to print loss")
     parser.add_argument('--device', default=0, type=int, help="gpu id")
     parser.add_argument('--work_name', default='', type=str, help="work path to save files")
+    parser.add_argument('--load_pretrained', default=True, type=bool, help="load pretrained model or not")
 
     parser.add_argument('--Nx_EQs', default=30000, type=int, help="xy sampling in for equation loss")
     parser.add_argument('--Nt_EQs', default=15, type=int, help="time sampling in for equation loss")
@@ -83,7 +84,11 @@ if __name__ == '__main__':
         Net_model = Net_multi(planes=planes, data_norm=(input_norm, field_norm), active=opts.activation).to(device)
     Visual = visual_data.matplotlib_vision(vald_path, field_name=('p', 'u', 'v'), input_name=('x', 'y'))
     Visual.font['size'] = 20
-    start_epoch, log_loss = Net_model.loadmodel(os.path.join(work_path, 'latest_model.pth'))
+    if opts.load_pretrained:
+        print('load pretrained model')
+        start_epoch, log_loss = Net_model.loadmodel(os.path.join(work_path, 'pretrained_model.pth'))
+    else:
+        start_epoch, log_loss = Net_model.loadmodel(os.path.join(work_path, 'latest_model.pth'))
 
 ####################################### plot loss #################################################################################
     try:
